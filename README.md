@@ -31,10 +31,10 @@ You can enable the Neovim Python3 interface with pip:
     pip3 install neovim
 
 ### TODOs:
-- Populate README.md with keybindings []
-- Add colors []
-- Add support cd/cp/mv/ []
-- Add support for searching using e.g. RipGrep []
+- [] Populate README.md with keybindings
+- [] Add colors
+- [] Add support cd/cp/mv/
+- [] Add support for searching using e.g. RipGrep
 
 ## Thanks
 Thanks for trying out this plugin, any feedback/contrubution would be much appreciated as
