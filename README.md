@@ -2,7 +2,7 @@
 
 Fuzzy finder file manager for Neovim with emphasis on speed and visibility
 
-_"Get that Total Commander fast pased navigation in vim"_
+_"Get that Total Commander fast paced navigation in vim"_
 
 ![Example Highlight](./media/demo.gif)
 
