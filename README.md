@@ -1,10 +1,10 @@
 # vim-tc-explorer.nvim
 
-![Example Highlight](./media/demo.gif)
-
 Fuzzy finder file manager for Neovim with emphasis on speed and visibility
 
 _"Get that Total Commander fast pased navigation in vim"_
+
+![Example Highlight](./media/demo.gif)
 
 ## Installation
 
