@@ -12,7 +12,7 @@ from vim_tc_explorer.vim_tc_explorer import vim_tc_explorer
 class VimTcExplorerHandlers(object):
     def __init__(self, nvim):
         self.nvim = nvim
-        self.TcExplorer = vim_tc_explorer(nvim)
+        self.TcExplorer = vim_tc_explorer(nvim, log=False)
 
     @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):

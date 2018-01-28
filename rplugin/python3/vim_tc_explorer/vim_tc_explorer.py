@@ -8,10 +8,22 @@ import re
 
 
 class vim_tc_explorer(object):
-    def __init__(self, nvim):
+    def __init__(self, nvim, log=False):
         self.nvim = nvim
+        # Setup debugging
+        self.useLogging = log
+        if(self.useLogging):
+            self.nvim.command('e TC_Debug')
+            self.logBuffer = self.nvim.current.buffer
+            self.nvim.command('setlocal buftype=nofile')
+            self.nvim.command('setlocal filetype=vim_tc_input')
+            self.nvim.command('normal! bn')
         # Start the explorer in cwd
         self.cwd = os.path.abspath(os.getcwd())
+
+    def log(self, msg):
+        if(self.useLogging):
+            self.logBuffer.append(msg)
 
     def draw(self):
         explorer = self.nvim.buffers[self.explorerBufferNumber]
@@ -30,8 +42,15 @@ class vim_tc_explorer(object):
     def cd(self, path):
         self.cwd = os.path.abspath(os.path.join(self.cwd, path))
         self.currentFiles = os.listdir(self.cwd)
-        self.fileredFiles = self.currentFiles
+        self.fileredFiles = self.currentFiles[:]
         self.changeSelection(0)
+
+    def filterSearch(self, input, pattern, output):
+        for entry in input[:]:
+            res = re.search(pattern, entry, re.IGNORECASE)
+            if res is not None:
+                output.append(entry)
+                input.remove(entry)
 
     def updateFilter(self):
         # TODO can even add one more pass with matching from start of word
@@ -40,23 +59,12 @@ class vim_tc_explorer(object):
         fuzzy = '.*'
         for c in self.currentInput:
             fuzzy += c + '.*'
-        c_currentFiles = self.currentFiles[:]
+        c_currentFiles = []
+        c_currentFiles[:] = self.currentFiles[:]
         self.fileredFiles = []
-        for entry in c_currentFiles:
-            res = re.search(beginningString, entry, re.IGNORECASE)
-            if res is not None:
-                self.fileredFiles.append(entry)
-                c_currentFiles.remove(entry)
-        for entry in c_currentFiles:
-            res = re.search(wholeString, entry, re.IGNORECASE)
-            if res is not None:
-                self.fileredFiles.append(entry)
-                c_currentFiles.remove(entry)
-        for entry in c_currentFiles:
-            res = re.search(fuzzy, entry, re.IGNORECASE)
-            if res is not None:
-                self.fileredFiles.append(entry)
-                c_currentFiles.remove(entry)
+        self.filterSearch(c_currentFiles, beginningString, self.fileredFiles)
+        self.filterSearch(c_currentFiles, wholeString, self.fileredFiles)
+        self.filterSearch(c_currentFiles, fuzzy, self.fileredFiles)
         self.changeSelection(0)
 
     def changeSelection(self, offset):
