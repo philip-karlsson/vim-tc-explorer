@@ -7,6 +7,8 @@ import re
 class Main(object):
     def __init__(self, nvim):
         self.nvim = nvim
+        # Start the explorer in cwd
+        self.cwd = os.path.abspath(os.getcwd())
 
     def draw(self):
         explorer = self.nvim.buffers[self.explorerBufferNumber]
@@ -120,7 +122,6 @@ class Main(object):
         self.nvim.command("inoremap <buffer> <C-q> ?")
 
         # The the current files
-        self.cwd = os.path.abspath(os.getcwd())
         self.currentFiles = os.listdir(self.cwd)
         self.fileredFiles = self.currentFiles
         # Index that tracks which file that is selected
