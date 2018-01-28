@@ -2,6 +2,7 @@ import neovim
 import os
 import re
 
+
 @neovim.plugin
 class Main(object):
     def __init__(self, nvim):
@@ -10,17 +11,16 @@ class Main(object):
     def draw(self):
         explorer = self.nvim.buffers[self.explorerBufferNumber]
         explorer[:] = ['==== TC explorer (alpha) ===']
-        # Draw current path 
+        # Draw current path
         explorer.append(self.cwd)
         explorer.append('----------------------------')
-        # FIXME: Draw selection using either color or arrow
-        # starting with drawing arrow (works also for terminals)
+        # FIXME: Add coloring
         for idx, val in enumerate(self.fileredFiles):
             if idx == self.selected:
                 token = "===> "
             else:
                 token = "     "
-            explorer.append(token + val) 
+            explorer.append(token + val)
 
     def cd(self, path):
         self.cwd = os.path.abspath(os.path.join(self.cwd, path))
@@ -29,7 +29,7 @@ class Main(object):
         self.changeSelection(0)
 
     def updateFilter(self):
-        #TODO can even add one more pass with matching from start of word
+        # TODO can even add one more pass with matching from start of word
         beginningString = '^' + self.currentInput + '.*'
         wholeString = '.*' + self.currentInput + '.*'
         fuzzy = '.*'
@@ -39,17 +39,17 @@ class Main(object):
         self.fileredFiles = []
         for entry in c_currentFiles:
             res = re.search(beginningString, entry, re.IGNORECASE)
-            if res != None:
+            if res is not None:
                 self.fileredFiles.append(entry)
                 c_currentFiles.remove(entry)
         for entry in c_currentFiles:
             res = re.search(wholeString, entry, re.IGNORECASE)
-            if res != None:
+            if res is not None:
                 self.fileredFiles.append(entry)
                 c_currentFiles.remove(entry)
         for entry in c_currentFiles:
             res = re.search(fuzzy, entry, re.IGNORECASE)
-            if res != None:
+            if res is not None:
                 self.fileredFiles.append(entry)
                 c_currentFiles.remove(entry)
         self.changeSelection(0)
@@ -68,23 +68,22 @@ class Main(object):
         self.nvim.command('bd %s' % self.explorerBufferNumber)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
-
     @neovim.command("TcExpEnter", range='', nargs='*', sync=True)
     def tc_enter(self, args, range):
         # Handle enter
-        if os.path.isdir(os.path.join(self.cwd, self.fileredFiles[self.selected])):
+        if os.path.isdir(os.path.join(self.cwd,
+                         self.fileredFiles[self.selected])):
             self.cd(self.fileredFiles[self.selected])
             self.draw()
             # Clear the line
             self.nvim.current.line = ''
             self.nvim.command('startinsert')
         else:
-            # Need to solve this part to get syntax, something with the nested 
-            # autocmds.... Cont. here...
-            self.nvim.command('e %s' % os.path.abspath(os.path.join(self.cwd, self.fileredFiles[self.selected])))
+            # Need to solve this part to get syntax, something with the nested
+            filePath = os.path.join(self.cwd, self.fileredFiles[self.selected])
+            self.nvim.command('e %s' % os.path.abspath(filePath))
             self.close()
             return
-
 
     @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
@@ -136,7 +135,7 @@ class Main(object):
         # self.nvim.command('normal! 0')
         inputLine = self.nvim.current.line
         # Check if backspace or enter (special keys)
-        if inputLine.endswith('%') == True:
+        if inputLine.endswith('%'):
             inputLine = inputLine.replace("%", "")
             # Handle backspace
             if not inputLine:
@@ -144,29 +143,15 @@ class Main(object):
                 self.cd('..')
             inputLine = inputLine[:-1]
         # FIXME: These matches shall be commands instead, just like for "enter"
-        elif inputLine.endswith('!') == True:
+        elif inputLine.endswith('!'):
             inputLine = inputLine.replace("!", "")
             # Handle selection up
             self.changeSelection(-1)
-        elif inputLine.endswith('@') == True:
+        elif inputLine.endswith('@'):
             inputLine = inputLine.replace("@", "")
             # Handle selection down
             self.changeSelection(1)
-        elif inputLine.endswith('$') == True:
-            inputLine = inputLine.replace("$", "")
-            # Handle enter
-            if os.path.isdir(os.path.join(self.cwd, self.fileredFiles[self.selected])):
-                self.cd(self.fileredFiles[self.selected])
-            else:
-                # Need to solve this part to get syntax, something with the nested 
-                # autocmds.... Cont. here...
-                self.nvim.command('e %s' % os.path.abspath(os.path.join(self.cwd, self.fileredFiles[self.selected])))
-                self.close()
-                return
-            # Else, edit the file in a clever way
-            # Clear the filter
-            inputLine = ""
-        elif inputLine.endswith('?') == True:
+        elif inputLine.endswith('?'):
             # Close
             self.close()
             return
@@ -177,4 +162,3 @@ class Main(object):
         self.updateFilter()
         # Draw
         self.draw()
-

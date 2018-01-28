@@ -2,7 +2,7 @@
 
 Fuzzy finder file manager for Neovim with emphasis on speed and visibility
 
-_"Get that Total Commander fast paced navigation in vim"_
+_"Get that Total Commander filter-as-you-type fast paced navigation in vim"_
 
 ![Example Highlight](./media/demo.gif)
 
@@ -32,6 +32,7 @@ You can enable the Neovim Python3 interface with pip:
 
 ### TODOs:
 - [ ] Populate README.md with keybindings
+- [ ] Add support for two panes
 - [ ] Add colors
 - [ ] Add support cd/cp/mv/
 - [ ] Add support for searching using e.g. RipGrep
