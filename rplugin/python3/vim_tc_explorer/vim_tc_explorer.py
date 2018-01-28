@@ -1,10 +1,13 @@
-import neovim
+# ============================================================================
+# FILE: vim_tc_explorer.py
+# AUTHOR: Philip Karlsson <philipkarlsson at me.com>
+# License: MIT license
+# ============================================================================
 import os
 import re
 
 
-@neovim.plugin
-class Main(object):
+class vim_tc_explorer(object):
     def __init__(self, nvim):
         self.nvim = nvim
         # Start the explorer in cwd
@@ -73,7 +76,6 @@ class Main(object):
         self.nvim.command('bd %s' % self.explorerBufferNumber)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
-    @neovim.command("TcExpEnter", range='', nargs='*', sync=True)
     def tc_enter(self, args, range):
         # Handle enter
         if os.path.isdir(os.path.join(self.cwd,
@@ -90,7 +92,6 @@ class Main(object):
             self.close()
             return
 
-    @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
         """ Initialize the plugin """
         # Remember the OG buffer
@@ -134,7 +135,6 @@ class Main(object):
         # Draw first frame
         self.draw()
 
-    @neovim.autocmd("TextChangedI", pattern='TC_Input', sync=True)
     def on_insert_enter(self):
         """ Process incoming string """
         # self.nvim.current.line = (self.nvim.current.buffer.name)
