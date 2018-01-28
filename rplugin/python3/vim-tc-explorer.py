@@ -67,6 +67,8 @@ class Main(object):
         # Method used to close the plugin
         # Delete both buffers
         self.nvim.command('stopinsert')
+        # Shift to the OG buffer
+        self.nvim.current.buffer = self.ogBuffer
         self.nvim.command('bd %s' % self.explorerBufferNumber)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
@@ -90,6 +92,8 @@ class Main(object):
     @neovim.command("Tc", range='', nargs='*', sync=True)
     def tc_explore(self, args, range):
         """ Initialize the plugin """
+        # Remember the OG buffer
+        self.ogBuffer = self.nvim.current.buffer
         # Create the input buffer
         self.nvim.command('e TC_Input')
         self.nvim.command('setlocal buftype=nofile')
