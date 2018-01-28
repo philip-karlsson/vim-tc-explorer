@@ -63,12 +63,13 @@ class Main(object):
         elif self.selected >= len(self.fileredFiles):
             self.selected = len(self.fileredFiles)-1
 
-    def close(self):
+    def close(self, withFile=True):
         # Method used to close the plugin
         # Delete both buffers
         self.nvim.command('stopinsert')
-        # Shift to the OG buffer
-        self.nvim.current.buffer = self.ogBuffer
+        if(withFile is False):
+            # Shift to the OG buffer
+            self.nvim.current.buffer = self.ogBuffer
         self.nvim.command('bd %s' % self.explorerBufferNumber)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
@@ -158,7 +159,7 @@ class Main(object):
             self.changeSelection(1)
         elif inputLine.endswith('?'):
             # Close
-            self.close()
+            self.close(False)
             return
         self.nvim.current.line = inputLine
         # Add regular expression

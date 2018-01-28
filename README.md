@@ -31,6 +31,7 @@ You can enable the Neovim Python3 interface with pip:
     pip3 install neovim
 
 ### TODOs:
+- [ ] Split source in to several files
 - [ ] Populate README.md with keybindings
 - [ ] Add support for two panes
 - [ ] Add colors
