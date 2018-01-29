@@ -26,9 +26,13 @@ class vim_tc_explorer(object):
         # Create both explorers but only show one depending on cmd?
         self.explorers = []
         self.explorers.append(explorer(self.cwd))
+        self.explorers.append(explorer(self.cwd))
         # Index to keep track of which explorer that is currently selected
         self.selectedExplorer = 0
 
+# ============================================================================
+# Helpers
+# ============================================================================
     def log(self, msg):
         if(self.useLogging):
             self.logBuffer.append(msg)
@@ -41,8 +45,13 @@ class vim_tc_explorer(object):
             # Shift to the OG buffer
             self.nvim.current.buffer = self.ogBuffer
         self.nvim.command('bd %s' % self.explorerBufferNumberOne)
+        if(self.explorerBufferNumberTwo is not None):
+            self.nvim.command('bd %s' % self.explorerBufferNumberTwo)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
+# ============================================================================
+# Commands
+# ============================================================================
     def tc_explore(self, args, range):
         """ Single pane explorer """
         self.numExplorers = 1
@@ -86,6 +95,61 @@ class vim_tc_explorer(object):
         # Draw first frame
         self.explorers[self.selectedExplorer].draw()
 
+    def tc_explore_dual(self, args, range):
+        """ Single pane explorer """
+        self.numExplorers = 2
+        self.selectedExplorer = 0
+        # Remember the OG buffer
+        self.ogBuffer = self.nvim.current.buffer
+        # Create the input buffer
+        self.nvim.command('e TC_Input')
+        self.nvim.command('setlocal buftype=nofile')
+        self.nvim.command('setlocal filetype=vim_tc_input')
+        # Might be wrong bcz ref
+        self.inputBufferNumber = self.nvim.current.buffer.number
+
+        # Create the explorer buffers
+        self.nvim.command('split TC_Explorer_2')  # 2 Bcz split, (inverted)
+        self.nvim.command('setlocal buftype=nofile')
+        self.nvim.command('setlocal filetype=vim_tc_explorer')
+        self.explorerBufferNumberOne = self.nvim.current.buffer.number
+        exp = self.explorers[0]
+        exp.assignBuffer(self.nvim.buffers[self.explorerBufferNumberOne])
+        # Two explorers
+        self.nvim.command('vsplit TC_Explorer_1')
+        self.nvim.command('setlocal buftype=nofile')
+        self.nvim.command('setlocal filetype=vim_tc_explorer')
+        self.explorerBufferNumberTwo = self.nvim.current.buffer.number
+        exp = self.explorers[1]
+        exp.assignBuffer(self.nvim.buffers[self.explorerBufferNumberTwo])
+        # Go back to the input buffer window
+        self.nvim.command('wincmd j')
+        # FIXME: Add one more line for quick help
+        self.nvim.current.window.height = 1
+        # Change to input buffer
+        self.nvim.current.buffer = self.nvim.buffers[self.inputBufferNumber]
+        self.nvim.command("startinsert!")
+        # Remap keys for the input layer
+        # Enter
+        self.nvim.command("inoremap <buffer> <CR> <ESC>:TcExpEnter<CR>")
+        # Backspace
+        self.nvim.command("inoremap <buffer> <BS> %")
+        # Up
+        self.nvim.command("inoremap <buffer> <C-k> <ESC>:TcExpUp<CR>")
+        # Down
+        self.nvim.command("inoremap <buffer> <C-j> <ESC>:TcExpDown<CR>")
+        # Tab
+        self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
+        # Close
+        self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
+        # Draw first frame
+        self.explorers[self.selectedExplorer].active = True
+        self.explorers[0].draw()
+        self.explorers[1].draw()
+
+# ============================================================================
+# Handlers
+# ============================================================================
     def tc_enter(self, args, range):
         # Handle enter
         exp = self.explorers[self.selectedExplorer]
@@ -114,6 +178,20 @@ class vim_tc_explorer(object):
         exp = self.explorers[self.selectedExplorer]
         exp.changeSelection(1)
         exp.draw()
+        self.nvim.command('startinsert')
+
+    def tc_tab(self, args, range):
+        if(self.numExplorers > 1):
+            if(self.selectedExplorer == 1):
+                self.selectedExplorer = 0
+                self.explorers[0].active = True
+                self.explorers[1].active = False
+            else:
+                self.selectedExplorer = 1
+                self.explorers[0].active = False
+                self.explorers[1].active = True
+            self.explorers[0].draw()
+            self.explorers[1].draw()
         self.nvim.command('startinsert')
 
     def tc_close(self, args, range):

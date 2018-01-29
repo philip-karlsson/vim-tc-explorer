@@ -18,6 +18,10 @@ class VimTcExplorerHandlers(object):
     def tc_explore(self, args, range):
         self.TcExplorer.tc_explore(args, range)
 
+    @neovim.command("Tcd", range='', nargs='*', sync=True)
+    def tc_explore_dual(self, args, range):
+        self.TcExplorer.tc_explore_dual(args, range)
+
     @neovim.command("TcExpEnter", range='', nargs='*', sync=True)
     def tc_enter(self, args, range):
         self.TcExplorer.tc_enter(args, range)
@@ -33,6 +37,10 @@ class VimTcExplorerHandlers(object):
     @neovim.command("TcExpClose", range='', nargs='*', sync=True)
     def tc_close(self, args, range):
         self.TcExplorer.tc_close(args, range)
+
+    @neovim.command("TcExpTab", range='', nargs='*', sync=True)
+    def tc_tab(self, args, range):
+        self.TcExplorer.tc_tab(args, range)
 
     @neovim.autocmd("TextChangedI", pattern='TC_Input', sync=True)
     def insert_changed(self):

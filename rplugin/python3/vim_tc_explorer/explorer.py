@@ -18,13 +18,17 @@ class explorer(object):
         self.fileredFiles = self.currentFiles
         # Index that tracks which file that is selected
         self.selected = 0
+        self.active = False
 
     def assignBuffer(self, buffer):
         self.buffer = buffer
 
     def draw(self):
         explorer = self.buffer
-        explorer[:] = ['==== TC explorer (alpha) ===']
+        if(self.active):
+            explorer[:] = ['==== TC explorer (alpha) === | ACTIVE']
+        else:
+            explorer[:] = ['==== TC explorer (alpha) ===']
         # Draw current path
         explorer.append(self.cwd)
         explorer.append('----------------------------')
