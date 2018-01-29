@@ -10,6 +10,7 @@ from vim_tc_explorer.filter import filter
 class explorer(object):
     """ Class for an explorer that is used in the panes """
     def __init__(self, cwd):
+        self.isSearcher = False
         # Instance of the filter
         self.filter = filter()
         self.cwd = cwd
@@ -70,8 +71,10 @@ class explorer(object):
         ret.append(leadingC + bar)
         ret.append(leadingC + 'TC Explorer (alpha)')
         # Shall be highlighted
-        ret.append(leadingC + '  >' + self.cwd)
+        ret.append(leadingC + '  $>' + self.cwd)
         qhStr = '  Quik Help: <Ret>:Open <C-q>:Quit <C-s>: Set CWD'
+        ret.append(leadingC + qhStr)
+        qhStr = '             <C-f>:Search'
         ret.append(leadingC + qhStr)
         ret.append(leadingC + bar)
         return ret

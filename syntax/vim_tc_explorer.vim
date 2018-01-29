@@ -3,7 +3,7 @@ if exists("b:current_syntax")
 endif
 
 syntax match _comment "\".*$"
-syntax match path ">.*$"
+syntax match path "$>.*$"
 syntax match folder "-->"
 syntax match folder "TC Explorer (alpha)"
 syntax match folder "+.*/"
@@ -11,17 +11,18 @@ syntax match folder "+.*/"
 syntax match commands "<Ret>"
 syntax match commands "<C-q>"
 syntax match commands "<C-s>"
+syntax match commands "<C-f>"
 
 " Match file types | FIXME: Add more
-syntax match editable ".*.py$"
-syntax match editable ".*.txt$"
-syntax match editable ".*.xml$"
-syntax match editable ".*.c$"
-syntax match editable ".*.cpp$"
-syntax match editable ".*.h$"
-syntax match editable ".*.hpp$"
-syntax match editable ".*.xsl$"
-syntax match editable ".*.mk$"
+syntax match editable ".*\.py$"
+syntax match editable ".*\.txt$"
+syntax match editable ".*\.xml$"
+syntax match editable ".*\.c$"
+syntax match editable ".*\.cpp$"
+syntax match editable ".*\.h$"
+syntax match editable ".*\.hpp$"
+syntax match editable ".*\.xsl$"
+syntax match editable ".*\.mk$"
 syntax match editable "Makefile"
 
 highlight link commands Statement

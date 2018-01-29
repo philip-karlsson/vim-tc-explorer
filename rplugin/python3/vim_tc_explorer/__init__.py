@@ -46,6 +46,10 @@ class VimTcExplorerHandlers(object):
     def tc_set_cwd(self, args, range):
         self.TcExplorer.tc_set_cwd(args, range)
 
+    @neovim.command("TcSearch", range='', nargs='*', sync=True)
+    def tc_search(self, args, range):
+        self.TcExplorer.tc_search(args, range)
+
     @neovim.autocmd("TextChangedI", pattern='TC_Input', sync=True)
     def insert_changed(self):
         self.TcExplorer.handle_input()

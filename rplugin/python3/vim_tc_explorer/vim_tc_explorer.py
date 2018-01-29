@@ -5,6 +5,7 @@
 # ============================================================================
 import os
 from vim_tc_explorer.explorer import explorer
+from vim_tc_explorer.searcher import searcher
 
 
 class vim_tc_explorer(object):
@@ -61,6 +62,8 @@ class vim_tc_explorer(object):
         self.nvim.command("inoremap <buffer> <C-j> <ESC>:TcExpDown<CR>")
         # Tab
         self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
+        # Search
+        self.nvim.command("inoremap <buffer> <C-f> <ESC>:TcSearch<CR>")
         # Set cwd
         self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
         # Close
@@ -203,6 +206,16 @@ class vim_tc_explorer(object):
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 
+    def tc_search(self, args, range):
+        """ Search patterns comes from command line """
+        # Save the current explorer for restoration when the searcher finish
+        self.expSave = self.explorers[self.selectedExplorer]
+        # Replace the current explorer with a searcher and borrow its buffer
+        self.explorers[self.selectedExplorer] = searcher(self.expSave.buffer)
+        self.explorers[self.selectedExplorer].draw()
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
     def handle_input(self):
         """ Input handler for filter """
         exp = self.explorers[self.selectedExplorer]
@@ -212,8 +225,13 @@ class vim_tc_explorer(object):
             inputLine = inputLine.replace("%", "")
             # Handle backspace
             if not inputLine:
-                # Change directory to the parrent
-                exp.cd('..')
+                if(exp.isSearcher):
+                    # Restore
+                    self.explorers[self.selectedExplorer] = self.expSave
+                    exp = self.explorers[self.selectedExplorer]
+                else:
+                    # Change directory to the parrent
+                    exp.cd('..')
             inputLine = inputLine[:-1]
         # FIXME: These matches shall be commands instead, just like for "enter"
         elif inputLine.endswith('!'):
