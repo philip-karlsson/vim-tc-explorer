@@ -15,7 +15,7 @@ class explorer(object):
         self.cwd = cwd
         # The the current files
         self.currentFiles = os.listdir(self.cwd)
-        self.fileredFiles = self.currentFiles
+        self.fileredFiles = self.currentFiles[:]
         # Index that tracks which file that is selected
         self.selected = 0
         self.active = True
