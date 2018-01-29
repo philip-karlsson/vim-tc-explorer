@@ -10,6 +10,7 @@ syntax match folder "+.*/"
 
 syntax match commands "<Ret>"
 syntax match commands "<C-q>"
+syntax match commands "<C-s>"
 
 " Match file types | FIXME: Add more
 syntax match editable ".*.py$"

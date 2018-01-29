@@ -49,6 +49,23 @@ class vim_tc_explorer(object):
             self.nvim.command('bd %s' % self.explorerBufferNumberTwo)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
+    def createKeyMap(self):
+        # Remap keys for the input layer
+        # Enter
+        self.nvim.command("inoremap <buffer> <CR> <ESC>:TcExpEnter<CR>")
+        # Backspace
+        self.nvim.command("inoremap <buffer> <BS> %")
+        # Up
+        self.nvim.command("inoremap <buffer> <C-k> <ESC>:TcExpUp<CR>")
+        # Down
+        self.nvim.command("inoremap <buffer> <C-j> <ESC>:TcExpDown<CR>")
+        # Tab
+        self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
+        # Set cwd
+        self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
+        # Close
+        self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
+
 # ============================================================================
 # Commands
 # ============================================================================
@@ -81,17 +98,7 @@ class vim_tc_explorer(object):
         # Change to input buffer
         self.nvim.current.buffer = self.nvim.buffers[self.inputBufferNumber]
         self.nvim.command("startinsert!")
-        # Remap keys for the input layer
-        # Enter
-        self.nvim.command("inoremap <buffer> <CR> <ESC>:TcExpEnter<CR>")
-        # Backspace
-        self.nvim.command("inoremap <buffer> <BS> %")
-        # Up
-        self.nvim.command("inoremap <buffer> <C-k> <ESC>:TcExpUp<CR>")
-        # Down
-        self.nvim.command("inoremap <buffer> <C-j> <ESC>:TcExpDown<CR>")
-        # Close
-        self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
+        self.createKeyMap()
         # Draw first frame
         self.explorers[self.selectedExplorer].draw()
 
@@ -129,19 +136,7 @@ class vim_tc_explorer(object):
         # Change to input buffer
         self.nvim.current.buffer = self.nvim.buffers[self.inputBufferNumber]
         self.nvim.command("startinsert!")
-        # Remap keys for the input layer
-        # Enter
-        self.nvim.command("inoremap <buffer> <CR> <ESC>:TcExpEnter<CR>")
-        # Backspace
-        self.nvim.command("inoremap <buffer> <BS> %")
-        # Up
-        self.nvim.command("inoremap <buffer> <C-k> <ESC>:TcExpUp<CR>")
-        # Down
-        self.nvim.command("inoremap <buffer> <C-j> <ESC>:TcExpDown<CR>")
-        # Tab
-        self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
-        # Close
-        self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
+        self.createKeyMap()
         # Draw first frame
         self.explorers[0].active = True
         self.explorers[1].active = False
@@ -201,6 +196,12 @@ class vim_tc_explorer(object):
 
     def tc_close(self, args, range):
         self.close()
+
+    def tc_set_cwd(self, args, range):
+        exp = self.explorers[self.selectedExplorer]
+        self.nvim.command("cd %s" % exp.cwd)
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
 
     def handle_input(self):
         """ Input handler for filter """

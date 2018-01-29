@@ -71,6 +71,7 @@ class explorer(object):
         ret.append(leadingC + 'TC Explorer (alpha)')
         # Shall be highlighted
         ret.append(leadingC + '  >' + self.cwd)
-        ret.append(leadingC + '  Quik Help: <Ret>:Open <C-q>:Quit')
+        qhStr = '  Quik Help: <Ret>:Open <C-q>:Quit <C-s>: Set CWD'
+        ret.append(leadingC + qhStr)
         ret.append(leadingC + bar)
         return ret
