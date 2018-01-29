@@ -40,7 +40,7 @@ class vim_tc_explorer(object):
         if(withFile is False):
             # Shift to the OG buffer
             self.nvim.current.buffer = self.ogBuffer
-        self.nvim.command('bd %s' % self.explorerBufferNumber)
+        self.nvim.command('bd %s' % self.explorerBufferNumberOne)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
     # FIXME: The handlers shall be declared here
@@ -57,7 +57,7 @@ class vim_tc_explorer(object):
             self.nvim.command('startinsert')
         else:
             # Need to solve this part to get syntax, something with the nested
-            filePath = os.path.join(self.cwd, selFile)
+            filePath = os.path.join(exp.cwd, selFile)
             self.nvim.command('e %s' % os.path.abspath(filePath))
             self.close()
             return
@@ -79,9 +79,11 @@ class vim_tc_explorer(object):
         self.nvim.command('split TC_Explorer')
         self.nvim.command('setlocal buftype=nofile')
         self.nvim.command('setlocal filetype=vim_tc_explorer')
-        self.explorerBufferNumber = self.nvim.current.buffer.number
+        self.explorerBufferNumberOne = self.nvim.current.buffer.number
+        # Only one explorer
+        self.explorerBufferNumberTwo = None
         exp = self.explorers[self.selectedExplorer]
-        exp.assignBuffer(self.nvim.buffers[self.explorerBufferNumber])
+        exp.assignBuffer(self.nvim.buffers[self.explorerBufferNumberOne])
         # Go back to the input buffer window
         self.nvim.command('wincmd j')
         # FIXME: Add one more line for quick help
