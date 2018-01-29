@@ -35,10 +35,14 @@ class explorer(object):
         # FIXME: Add coloring
         for idx, val in enumerate(self.fileredFiles):
             if idx == self.selected:
-                token = "===> "
+                token = "-->"
             else:
-                token = "     "
-            explorer.append(token + val)
+                token = "   "
+            if(os.path.isdir(os.path.abspath(os.path.join(self.cwd, val)))):
+                # Folder
+                explorer.append(token + ' +' + val + '/')
+            else:
+                explorer.append(token + '  ' + val)
 
     def cd(self, path):
         self.cwd = os.path.abspath(os.path.join(self.cwd, path))
