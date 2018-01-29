@@ -18,23 +18,18 @@ class explorer(object):
         self.fileredFiles = self.currentFiles
         # Index that tracks which file that is selected
         self.selected = 0
-        self.active = False
+        self.active = True
 
     def assignBuffer(self, buffer):
         self.buffer = buffer
 
     def draw(self):
         explorer = self.buffer
-        if(self.active):
-            explorer[:] = ['==== TC explorer (alpha) === | ACTIVE']
-        else:
-            explorer[:] = ['==== TC explorer (alpha) ===']
-        # Draw current path
-        explorer.append(self.cwd)
-        explorer.append('----------------------------')
+        # New way of getting the header
+        explorer[:] = self.getUIHeader()
         # FIXME: Add coloring
         for idx, val in enumerate(self.fileredFiles):
-            if idx == self.selected:
+            if idx == self.selected and self.active:
                 token = "-->"
             else:
                 token = "   "
@@ -63,3 +58,19 @@ class explorer(object):
 
     def getSelected(self):
         return self.fileredFiles[self.selected]
+
+    # Gui header
+    def getUIHeader(self):
+        bar = "==============================================================="
+        if(self.active):
+            leadingC = '# '
+        else:
+            leadingC = '" '
+        ret = []
+        ret.append(leadingC + bar)
+        ret.append(leadingC + 'TC Explorer (alpha)')
+        # Shall be highlighted
+        ret.append(leadingC + '  >' + self.cwd)
+        ret.append(leadingC + '  Quik Help: <Ret>:Open <C-q>:Quit')
+        ret.append(leadingC + bar)
+        return ret

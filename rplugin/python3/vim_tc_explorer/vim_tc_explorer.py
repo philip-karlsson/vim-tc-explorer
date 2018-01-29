@@ -143,7 +143,8 @@ class vim_tc_explorer(object):
         # Close
         self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
         # Draw first frame
-        self.explorers[self.selectedExplorer].active = True
+        self.explorers[0].active = True
+        self.explorers[1].active = False
         self.explorers[0].draw()
         self.explorers[1].draw()
 
@@ -173,14 +174,17 @@ class vim_tc_explorer(object):
         exp.changeSelection(-1)
         exp.draw()
         self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
 
     def tc_down(self, args, range):
         exp = self.explorers[self.selectedExplorer]
         exp.changeSelection(1)
         exp.draw()
         self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
 
     def tc_tab(self, args, range):
+        # Change focus when having multiple panes
         if(self.numExplorers > 1):
             if(self.selectedExplorer == 1):
                 self.selectedExplorer = 0
@@ -193,6 +197,7 @@ class vim_tc_explorer(object):
             self.explorers[0].draw()
             self.explorers[1].draw()
         self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
 
     def tc_close(self, args, range):
         self.close()
