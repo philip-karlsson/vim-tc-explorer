@@ -43,25 +43,6 @@ class vim_tc_explorer(object):
         self.nvim.command('bd %s' % self.explorerBufferNumberOne)
         self.nvim.command('bd %s' % self.inputBufferNumber)
 
-    # FIXME: The handlers shall be declared here
-    def tc_enter(self, args, range):
-        # Handle enter
-        exp = self.explorers[self.selectedExplorer]
-        selFile = exp.getSelected()
-        if os.path.isdir(os.path.join(exp.cwd,
-                         selFile)):
-            exp.cd(selFile)
-            exp.draw()
-            # Clear the line
-            self.nvim.current.line = ''
-            self.nvim.command('startinsert')
-        else:
-            # Need to solve this part to get syntax, something with the nested
-            filePath = os.path.join(exp.cwd, selFile)
-            self.nvim.command('e %s' % os.path.abspath(filePath))
-            self.close()
-            return
-
     def tc_explore(self, args, range):
         """ Single pane explorer """
         self.numExplorers = 1
@@ -97,21 +78,52 @@ class vim_tc_explorer(object):
         # Backspace
         self.nvim.command("inoremap <buffer> <BS> %")
         # Up
-        self.nvim.command("inoremap <buffer> <C-k> !")
+        self.nvim.command("inoremap <buffer> <C-k> <ESC>:TcExpUp<CR>")
         # Down
-        self.nvim.command("inoremap <buffer> <C-j> @")
+        self.nvim.command("inoremap <buffer> <C-j> <ESC>:TcExpDown<CR>")
         # Close
-        self.nvim.command("inoremap <buffer> <C-q> ?")
+        self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
         # Draw first frame
         self.explorers[self.selectedExplorer].draw()
 
-    def on_insert_enter(self):
-        """ Process incoming string """
-        # self.nvim.current.line = (self.nvim.current.buffer.name)
-        # self.nvim.command('normal! 0')
+    def tc_enter(self, args, range):
+        # Handle enter
+        exp = self.explorers[self.selectedExplorer]
+        selFile = exp.getSelected()
+        if os.path.isdir(os.path.join(exp.cwd,
+                         selFile)):
+            exp.cd(selFile)
+            exp.draw()
+            # Clear the line
+            self.nvim.current.line = ''
+            self.nvim.command('startinsert')
+        else:
+            # Need to solve this part to get syntax, something with the nested
+            filePath = os.path.join(exp.cwd, selFile)
+            self.nvim.command('e %s' % os.path.abspath(filePath))
+            self.close()
+            return
+
+    def tc_up(self, args, range):
+        exp = self.explorers[self.selectedExplorer]
+        exp.changeSelection(-1)
+        exp.draw()
+        self.nvim.command('startinsert')
+
+    def tc_down(self, args, range):
+        exp = self.explorers[self.selectedExplorer]
+        exp.changeSelection(1)
+        exp.draw()
+        self.nvim.command('startinsert')
+
+    def tc_close(self, args, range):
+        self.close()
+
+    def handle_input(self):
+        """ Input handler for filter """
         exp = self.explorers[self.selectedExplorer]
         inputLine = self.nvim.current.line
-        # Check if backspace or enter (special keys)
+        # Check for backspace
         if inputLine.endswith('%'):
             inputLine = inputLine.replace("%", "")
             # Handle backspace

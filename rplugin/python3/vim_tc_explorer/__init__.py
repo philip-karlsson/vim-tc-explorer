@@ -22,6 +22,18 @@ class VimTcExplorerHandlers(object):
     def tc_enter(self, args, range):
         self.TcExplorer.tc_enter(args, range)
 
+    @neovim.command("TcExpUp", range='', nargs='*', sync=True)
+    def tc_up(self, args, range):
+        self.TcExplorer.tc_up(args, range)
+
+    @neovim.command("TcExpDown", range='', nargs='*', sync=True)
+    def tc_down(self, args, range):
+        self.TcExplorer.tc_down(args, range)
+
+    @neovim.command("TcExpClose", range='', nargs='*', sync=True)
+    def tc_close(self, args, range):
+        self.TcExplorer.tc_close(args, range)
+
     @neovim.autocmd("TextChangedI", pattern='TC_Input', sync=True)
-    def on_insert_enter(self):
-        self.TcExplorer.on_insert_enter()
+    def insert_changed(self):
+        self.TcExplorer.handle_input()
