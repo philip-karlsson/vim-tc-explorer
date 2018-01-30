@@ -1,5 +1,8 @@
 # vim-tc-explorer.nvim
 
+# DISCONTINUED
+- Future development will be in https://github.com/philip-karlsson/bolt.nvim
+
 Fuzzy finder file manager for Neovim with emphasis on speed and visibility
 
 _"Get that Total Commander filter-as-you-type fast paced navigation in vim"_
