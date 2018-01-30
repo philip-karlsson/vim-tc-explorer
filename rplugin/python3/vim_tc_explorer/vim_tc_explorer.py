@@ -63,7 +63,8 @@ class vim_tc_explorer(object):
         # Tab
         self.nvim.command("inoremap <buffer> <tab> <ESC>:TcExpTab<CR>")
         # Search
-        self.nvim.command("inoremap <buffer> <C-f> <ESC>:TcSearch<CR>")
+        str = "inoremap <buffer> <C-f> <ESC>:TcSearch (-t/-g)file;(pattern): "
+        self.nvim.command(str)
         # Set cwd
         self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
         # Close
@@ -211,7 +212,16 @@ class vim_tc_explorer(object):
         # Save the current explorer for restoration when the searcher finish
         self.expSave = self.explorers[self.selectedExplorer]
         # Replace the current explorer with a searcher and borrow its buffer
-        self.explorers[self.selectedExplorer] = searcher(self.expSave.buffer)
+        se = searcher(self.nvim, self.expSave.buffer)
+        # Perfor the search with the correct parameters
+        dir = self.expSave.cwd
+        filePattern = args[1]
+        if(len(args) > 2):
+            inputPattern = args[2]
+        else:
+            inputPattern = ''
+        se.search(dir, filePattern, inputPattern)
+        self.explorers[self.selectedExplorer] = se
         self.explorers[self.selectedExplorer].draw()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
