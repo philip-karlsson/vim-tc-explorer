@@ -15,7 +15,7 @@ class resultGroup(object):
 
 
 class searcher(object):
-    def __init__(self, nvim, buffer):
+    def __init__(self, nvim, buffer, cwd):
         self.nvim = nvim
         self.filter = filter()
         self.buffer = buffer
@@ -24,6 +24,7 @@ class searcher(object):
         self.selected = 0
         self.fileredFiles = []
         self.expanded = False
+        self.cwd = cwd
 
     def assignBuffer(self, buffer):
         # This method is only called during re-init so we already have old
@@ -51,13 +52,16 @@ class searcher(object):
 
     def getFileListFromResults(self):
         self.fileList = []
+        self.rawFileList = []
         for res in self.fileredFiles:
             # Add the file
+            self.rawFileList.append(res)
             self.fileList.append('+'+res + ' | ' +
                                  str(self.results[res].matches) + ' matches')
             if self.expanded:
                 for l in self.results[res].lines:
                     self.fileList.append('  -'+l)
+                    self.rawFileList.append(l)
 
     def search(self, dir, filePattern, inputPattern):
         self.prevbuffer = self.nvim.current.buffer
@@ -108,6 +112,17 @@ class searcher(object):
             self.buffer.append(token + val)
         # Debug
         # self.buffer.append(self.command)
+
+    def getSelected(self):
+        lineNum = None
+        currLine = self.rawFileList[self.selected]
+        if(':' in currLine):
+            # This is a match in a file
+            lineParts = currLine.split(':')
+            self.buffer[:] = lineParts
+            currLine = lineParts[0]
+            lineNum = int(lineParts[1])
+        return currLine, lineNum
 
     def getUIHeader(self):
         bar = "==============================================================="

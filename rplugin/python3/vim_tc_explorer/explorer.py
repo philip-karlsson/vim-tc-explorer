@@ -58,7 +58,7 @@ class explorer(object):
             self.selected = len(self.fileredFiles)-1
 
     def getSelected(self):
-        return self.fileredFiles[self.selected]
+        return self.fileredFiles[self.selected], None
 
     # Gui header
     def getUIHeader(self):

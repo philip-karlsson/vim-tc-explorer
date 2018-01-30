@@ -155,7 +155,7 @@ class vim_tc_explorer(object):
     def tc_enter(self, args, range):
         # Handle enter
         exp = self.explorers[self.selectedExplorer]
-        selFile = exp.getSelected()
+        selFile, lineNum = exp.getSelected()
         if os.path.isdir(os.path.join(exp.cwd,
                          selFile)):
             exp.cd(selFile)
@@ -164,9 +164,13 @@ class vim_tc_explorer(object):
             self.nvim.current.line = ''
             self.nvim.command('startinsert')
         else:
-            # Need to solve this part to get syntax, something with the nested
             filePath = os.path.join(exp.cwd, selFile)
-            self.nvim.command('e %s' % os.path.abspath(filePath))
+            if(lineNum is not None):
+                # Would be nice to go to zz at the same time
+                self.nvim.command('e +%d %s' % (lineNum,
+                                                os.path.abspath(filePath)))
+            else:
+                self.nvim.command('e %s' % os.path.abspath(filePath))
             self.close()
             return
 
@@ -214,7 +218,7 @@ class vim_tc_explorer(object):
         # Save the current explorer for restoration when the searcher finish
         self.expSave = self.explorers[self.selectedExplorer]
         # Replace the current explorer with a searcher and borrow its buffer
-        se = searcher(self.nvim, self.expSave.buffer)
+        se = searcher(self.nvim, self.expSave.buffer, self.expSave.cwd)
         # Perfor the search with the correct parameters
         dir = self.expSave.cwd
         filePattern = args[1]
