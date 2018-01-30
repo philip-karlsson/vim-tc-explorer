@@ -4,7 +4,6 @@ endif
 
 syntax match _comment "\".*$"
 syntax match path "$>.*$"
-syntax match folder "-->"
 syntax match folder "TC Explorer (alpha)"
 syntax match folder "+.*/"
 
@@ -25,6 +24,7 @@ syntax match editable ".*\.xsl$"
 syntax match editable ".*\.mk$"
 syntax match editable "Makefile"
 
+syntax match commands "-->.*"
 highlight link commands Statement
 highlight link folder Keyword
 highlight link marker Number

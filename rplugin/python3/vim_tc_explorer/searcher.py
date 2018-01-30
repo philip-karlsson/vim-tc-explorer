@@ -79,7 +79,10 @@ class searcher(object):
             filePattern = filePattern.replace('-t', '-g')
             self.command += "rg %s --files" % (filePattern)
         self.buffer[:] = []
-        self.nvim.command("r !\"%s\"" % self.command)
+        # Below does not work for mac
+        # self.nvim.command("r !\"%s\"" % self.command)
+        # Verify that this works for Windows
+        self.nvim.command("r !%s" % self.command)
         self.nvim.current.buffer = self.prevbuffer
         self.createResultStructure()
         self.getFileListFromResults()

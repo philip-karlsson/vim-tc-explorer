@@ -2,14 +2,15 @@ if exists("b:current_syntax")
   finish
 endif
 
-syntax match group "-->"
 syntax match commands "<Ret>"
 syntax match commands "<C-q>"
+syntax match commands "<C-a>"
 
 syntax match group "+.*"
-syntax match file "*.*"
+" syntax match path "-.*$"
 syntax match path "$>.*$"
 
+syntax match commands "-->.*"
 highlight link group Keyword
 highlight link path Debug
 highlight link file Debug
