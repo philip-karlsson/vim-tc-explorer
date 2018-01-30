@@ -239,6 +239,10 @@ class vim_tc_explorer(object):
                     # Restore
                     self.explorers[self.selectedExplorer] = self.expSave
                     exp = self.explorers[self.selectedExplorer]
+                    prevbuffer = self.nvim.current.buffer
+                    self.nvim.current.buffer = exp.buffer
+                    self.nvim.command('setlocal filetype=vim_tc_explorer')
+                    self.nvim.current.buffer = prevbuffer
                 else:
                     # Change directory to the parrent
                     exp.cd('..')
