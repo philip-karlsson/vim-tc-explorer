@@ -50,6 +50,10 @@ class VimTcExplorerHandlers(object):
     def tc_search(self, args, range):
         self.TcExplorer.tc_search(args, range)
 
+    @neovim.command("TcSearchToggle", range='', nargs='*', sync=True)
+    def tc_search_toggle(self, args, range):
+        self.TcExplorer.tc_search_toggle(args, range)
+
     @neovim.autocmd("TextChangedI", pattern='TC_Input', sync=True)
     def insert_changed(self):
         self.TcExplorer.handle_input()

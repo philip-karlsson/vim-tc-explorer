@@ -67,6 +67,8 @@ class vim_tc_explorer(object):
         self.nvim.command(str)
         # Set cwd
         self.nvim.command("inoremap <buffer> <C-s> <ESC>:TcSetCwd<CR>")
+        # Expand/Collapse search matches
+        self.nvim.command("inoremap <buffer> <C-a> <ESC>:TcSearchToggle<CR>")
         # Close
         self.nvim.command("inoremap <buffer> <C-q> <ESC>:TcExpClose<CR>")
 
@@ -223,6 +225,15 @@ class vim_tc_explorer(object):
         se.search(dir, filePattern, inputPattern)
         self.explorers[self.selectedExplorer] = se
         self.explorers[self.selectedExplorer].draw()
+        self.nvim.command('startinsert')
+        self.nvim.command('normal! $')
+
+    def tc_search_toggle(self, args, range):
+        exp = self.explorers[self.selectedExplorer]
+        if(exp.isSearcher):
+            exp.toggle()
+            exp.updateListing(self.nvim.current.line)
+            exp.draw()
         self.nvim.command('startinsert')
         self.nvim.command('normal! $')
 
