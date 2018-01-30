@@ -38,18 +38,20 @@ class searcher(object):
 
     def createResultStructure(self):
         self.results = {}
+        self.resultFiles = []
         for line in self.buffer[1:len(self.buffer)]:
             # Process each line
             f = line.split(':')
             if(f is not None):
                 if(not f[0] in self.results):
                     self.results[f[0]] = resultGroup(f[0])
+                    self.resultFiles.append(f[0])
                 self.results[f[0]].lines.append(line)
                 self.results[f[0]].matches += 1
 
     def getFileListFromResults(self):
         self.fileList = []
-        for res in self.results:
+        for res in self.fileredFiles:
             # Add the file
             self.fileList.append('+'+res + ' | ' +
                                  str(self.results[res].matches) + ' matches')
@@ -79,27 +81,26 @@ class searcher(object):
         self.getFileListFromResults()
 
     def updateListing(self, pattern):
-        self.filter.filter(self.fileList, pattern, self.fileredFiles)
+        self.filter.filter(self.resultFiles, pattern, self.fileredFiles)
+        self.getFileListFromResults()
         self.changeSelection(0)
 
     def changeSelection(self, offset):
+        # Selection is this time based on fileList
         self.selected += offset
         if self.selected < 0:
             self.selected = 0
-        elif self.selected >= len(self.fileredFiles):
-            self.selected = len(self.fileredFiles)-1
+        elif self.selected >= len(self.fileList):
+            self.selected = len(self.fileList)-1
 
     def toggle(self):
         self.expanded = not self.expanded
         self.getFileListFromResults()
 
     def draw(self):
-        fLines = []
-        for f in self.results:
-            fLines.append('+' + f + ' | %s matches' % self.results[f].matches)
         self.buffer[:] = self.getUIHeader()
         # Draw each file
-        for idx, val in enumerate(self.fileredFiles):
+        for idx, val in enumerate(self.fileList):
             if idx == self.selected:
                 token = '-->'
             else:
